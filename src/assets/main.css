@@ -1,0 +1,12 @@
+html, body, #app {
+  height: 100%;
+}
+body {
+  margin: 0;
+  background: #0f1e3a;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+}
+.el-card {
+  background: rgba(255,255,255,0.04);
+  color: #e2e8f0;
+}
