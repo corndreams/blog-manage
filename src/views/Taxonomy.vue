@@ -69,7 +69,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
 import { useTaxonomyStore } from '@/stores/taxonomy'
-import { postTagEdit } from "@/api/taxonomy";
+import { postTagEdit, postCategoryEdit, deleteCategory, deleteTag } from "@/api/taxonomy";
 
 const store = useTaxonomyStore()
 const activeType = ref<'category' | 'tag'>('category')
@@ -101,7 +101,7 @@ const onAdd = async () => {
     desc: form.value.desc || '',
   }
   if (activeType.value === 'category') {
-    // await postCategoryAdd(payload)
+    await postCategoryEdit(payload)
   } else {
     await postTagEdit(payload)
   }
@@ -114,8 +114,37 @@ const onAdd = async () => {
 const editVisible = ref(false)
 const edit = ref<any>({})
 const editItem = (row: any) => { edit.value = { ...row }; editVisible.value = true }
-const onEditSave = () => { editVisible.value = false; ElMessage.success('保存成功（示例）') }
-const removeItem = async (row: any) => { ElMessage.info('删除接口未连接，此操作仅示例') }
+const onEditSave = async () => {
+  await formRef.value?.validate()
+  // loading.value = true
+  const payload: any = {
+    id: edit.value.id,
+    name: edit.value.name,
+    alias: edit.value.alias || '',
+    desc: edit.value.desc || '',
+  }
+  
+  if (activeType.value === 'category') {
+    console.log(payload);
+    
+    await postCategoryEdit(payload)
+  } else {
+    await postTagEdit(payload)
+  }
+  // loading.value = false
+  ElMessage.success('保存成功')
+  store.fetchCategories(); store.fetchTags()
+}
+const removeItem = async (row: any) => { 
+  if (!confirm(`确认删除${activeType.value === 'category' ? '分类' : '标签'} ${row.name}？`)) return
+  if (activeType.value === 'category') {
+    await deleteCategory(row.id)
+  } else {
+    await deleteTag(row.id)
+  }
+  ElMessage.success('删除成功')
+  store.fetchCategories(); store.fetchTags()
+ }
 const bulkRemove = async () => { ElMessage.info('批量删除接口未连接，此操作仅示例') }
 </script>
 
