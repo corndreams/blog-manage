@@ -51,7 +51,7 @@
     </el-row>
 
     <el-dialog v-model="editVisible" title="编辑" width="480px">
-      <el-form :model="edit" label-position="top">
+      <el-form :model="edit" label-position="top" ref="editRef">
         <el-form-item label="名称"><el-input v-model="edit.name" /></el-form-item>
         <el-form-item label="别名"><el-input v-model="edit.slug" /></el-form-item>
         <el-form-item label="描述"><el-input v-model="edit.desc" type="textarea" :rows="4" /></el-form-item>
@@ -75,6 +75,7 @@ const store = useTaxonomyStore()
 const activeType = ref<'category' | 'tag'>('category')
 const keyword = ref('')
 const formRef = ref()
+const editRef = ref()
 const form = ref<{ name: string; slug: string; desc?: string }>({ name: '', slug: '', desc: '' })
 const rules = { name: [{ required: true, message: '请输入名称', trigger: 'blur' }] }
 
@@ -115,7 +116,7 @@ const editVisible = ref(false)
 const edit = ref<any>({})
 const editItem = (row: any) => { edit.value = { ...row }; editVisible.value = true }
 const onEditSave = async () => {
-  await formRef.value?.validate()
+  await editRef.value?.validate()
   // loading.value = true
   const payload: any = {
     id: edit.value.id,
