@@ -26,7 +26,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { House, Document, ChatDotRound, Message, User, Collection, PriceTag, Edit, View, Picture } from '@element-plus/icons-vue'
+import { House, Document, ChatDotRound, Message, User, Collection, PriceTag, Edit, View, Picture, Link } from '@element-plus/icons-vue'
 
 type MenuItem = {
   path: string
@@ -47,6 +47,7 @@ const menuItems: MenuItem[] = [
   { path: '/diary', title: '随记管理', iconComponent: Edit },
   { path: '/visits', title: '访问记录', iconComponent: View },
   { path: '/gallery', title: '图库', iconComponent: Picture },
+  { path: '/links', title: '个人链接', iconComponent: Link },
 ]
 </script>
 
