@@ -38,6 +38,7 @@
   height: 320px;
   background: radial-gradient(closest-side, rgba(255,255,255,0.06), transparent);
   filter: blur(2px);
+  pointer-events: none;
 }
 .center { width: 420px; max-width: 92vw; }
 .footer { position: absolute; bottom: 24px; color: #94a3b8; }
