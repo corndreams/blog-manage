@@ -45,6 +45,16 @@
 
       <el-form-item label="内容" prop="content">
         <div class="editor-wrap">
+          <div class="editor-actions">
+            <el-upload
+              :auto-upload="false"
+              :show-file-list="false"
+              accept=".md,.markdown"
+              :on-change="onMdChange"
+            >
+              <el-button type="primary" plain>导入MD</el-button>
+            </el-upload>
+          </div>
           <Toolbar :editor="editorRef" :defaultConfig="toolbarConfig" class="toolbar" />
           <Editor
             v-model="form.content"
@@ -65,11 +75,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef, onBeforeUnmount } from 'vue'
+import { ref, shallowRef, onBeforeUnmount, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import '@wangeditor/editor/dist/css/style.css'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
+import matter from 'gray-matter'
+import MarkdownIt from 'markdown-it'
 import { postArticleEdit, uploadImage, getArticle } from '@/api/articles'
 import { useTaxonomyStore } from '@/stores/taxonomy'
 
@@ -97,7 +109,119 @@ const toolbarConfig = {}
 const editorConfig = { placeholder: '请输入内容...' }
 const handleCreated = (editor: any) => { editorRef.value = editor }
 onBeforeUnmount(() => { const e = editorRef.value; if (e) e.destroy() })
-import { onMounted } from 'vue'
+
+const markdown = new MarkdownIt({ html: true, linkify: true, breaks: true })
+
+const unquote = (s: string) => {
+  const v = s.trim()
+  if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) return v.slice(1, -1)
+  return v
+}
+
+const parseTagNames = (v: unknown): string[] => {
+  if (v == null) return []
+  if (Array.isArray(v)) return v.map(x => String(x).trim()).filter(Boolean)
+  const s = String(v).trim()
+  if (!s) return []
+  const raw = unquote(s)
+  if (raw.startsWith('[') && raw.endsWith(']')) {
+    return raw.slice(1, -1).split(',').map(t => unquote(t).trim()).filter(Boolean)
+  }
+  if (raw.includes(',')) return raw.split(',').map(t => unquote(t).trim()).filter(Boolean)
+  if (raw.includes(' ')) return raw.split(' ').map(t => unquote(t).trim()).filter(Boolean)
+  return [raw]
+}
+
+const extractExcerpt = (md: string) => {
+  const beforeMore = md.split('<!--more-->')[0] || ''
+  const cleaned = beforeMore
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/!\[[^\]]*]\([^)]*\)/g, ' ')
+    .replace(/\[[^\]]*]\([^)]*\)/g, ' ')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/^\s*[-*+]\s+/gm, '')
+    .replace(/^\s*\d+\.\s+/gm, '')
+    .replace(/[*_`>]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+  return cleaned
+}
+
+const readFileAsText = (file: File) => new Promise<string>((resolve, reject) => {
+  const reader = new FileReader()
+  reader.onerror = () => reject(new Error('读取文件失败'))
+  reader.onload = () => resolve(String(reader.result || ''))
+  reader.readAsText(file, 'utf-8')
+})
+
+const resolveCategoryId = (v: unknown) => {
+  const s = unquote(String(v ?? '')).trim()
+  if (!s) return null
+  if (/^\d+$/.test(s)) return Number(s)
+  const hit = taxonomyStore.categories.find(c => c.name === s) || taxonomyStore.categories.find(c => c.name.toLowerCase() === s.toLowerCase())
+  return hit?.id ?? null
+}
+
+const resolveTagIds = (names: string[]) => {
+  const ids: number[] = []
+  const missing: string[] = []
+  for (const n of names) {
+    const name = n.trim()
+    if (!name) continue
+    const hit = taxonomyStore.tags.find(t => t.name === name) || taxonomyStore.tags.find(t => t.name.toLowerCase() === name.toLowerCase())
+    if (hit) ids.push(hit.id)
+    else missing.push(name)
+  }
+  return { ids: Array.from(new Set(ids)), missing }
+}
+
+const onMdChange = async (file: any) => {
+  const raw = file.raw as File
+  if (!raw) return
+  try {
+    await taxonomyStore.ensureLoaded()
+    const mdText = await readFileAsText(raw)
+    const parsed = matter(mdText)
+    const data: any = parsed.data || {}
+    const content = String(parsed.content || '')
+
+    const title = data.title ? unquote(data.title) : ''
+    const cover = data.cover ? unquote(data.cover) : ''
+    const description = data.description ? unquote(data.description) : (data.summary ? unquote(data.summary) : '')
+    const categoryVal = data.category ?? data.categories ?? data.category_name ?? ''
+    const tagVal = data.tags ?? data.tag ?? ''
+
+    if (title) form.value.title = title
+    if (cover) form.value.cover = cover
+    if (description) form.value.description = description
+
+    if (categoryVal) {
+      const cid = resolveCategoryId(categoryVal)
+      if (cid != null) form.value.category_id = cid
+      else ElMessage.warning(`未找到分类：${unquote(String(categoryVal))}`)
+    }
+
+    const tagNames = parseTagNames(tagVal)
+    if (tagNames.length) {
+      const { ids, missing } = resolveTagIds(tagNames)
+      if (ids.length) form.value.tagIds = ids
+      if (missing.length) ElMessage.warning(`未找到标签：${missing.join('、')}`)
+    }
+
+    if (!form.value.description) {
+      const excerpt = extractExcerpt(content)
+      if (excerpt) form.value.description = excerpt.slice(0, 200)
+    }
+
+    const body = content.replace(/<!--more-->/g, '').trim()
+    form.value.content = markdown.render(body)
+    ElMessage.success('已导入MD')
+  } catch (e: any) {
+    ElMessage.error(e?.message || '导入失败')
+  }
+}
+
 onMounted(async () => {
   taxonomyStore.ensureLoaded()
   if (isEdit && form.value.id != null) {
@@ -173,6 +297,7 @@ const applyCoverLink = () => { if (coverLink.value) form.value.cover = coverLink
 }
 .title { margin: 0 0 8px; color: #e2e8f0; }
 .editor-wrap { display: block; }
+.editor-actions { display: flex; justify-content: flex-end; margin-bottom: 8px; }
 .toolbar { border: 1px solid rgba(255,255,255,0.1); border-bottom: none; border-radius: 8px 8px 0 0; display:block; }
 .editor { border: 1px solid rgba(255,255,255,0.1); height: 420px; overflow-y: auto; border-radius: 0 0 8px 8px; background: rgba(255,255,255,0.04); display:block; }
 .actions { display: flex; gap: 8px; }

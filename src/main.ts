@@ -2,6 +2,7 @@ import './assets/main.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import { Buffer } from 'buffer'
 
 import App from './App.vue'
 import router from './router'
@@ -11,6 +12,8 @@ import 'element-plus/dist/index.css'
 import * as Icons from '@element-plus/icons-vue'
 import { useAuthStore } from '@/stores/auth'
 import { setAuthToken } from '@/api/http'
+
+if (!(globalThis as any).Buffer) (globalThis as any).Buffer = Buffer
 
 const app = createApp(App)
 
