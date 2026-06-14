@@ -1,7 +1,8 @@
 <template>
   <div class="links">
     <el-card class="toolbar" shadow="never">
-      <div class="left">
+      <div class="left"></div>
+      <div class="right">
         <el-button type="primary" @click="onCreate">新增链接</el-button>
       </div>
     </el-card>

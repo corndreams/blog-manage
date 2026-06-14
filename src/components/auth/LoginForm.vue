@@ -81,28 +81,31 @@ const onRegister = () => ElMessage.info("暂未开放注册");
 
 <style scoped>
 .card {
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.08),
-    rgba(255, 255, 255, 0.06)
-  );
+  border: 1px solid var(--wf-border-dark);
+  background:
+    linear-gradient(145deg, rgba(255, 252, 242, 0.14), rgba(79, 183, 165, 0.055)),
+    rgba(26, 38, 33, 0.72);
   box-shadow:
-    0 8px 24px rgba(13, 110, 253, 0.25),
-    inset 0 0 24px rgba(56, 189, 248, 0.25);
-  border-radius: 16px;
-  padding: 8px;
+    0 24px 70px rgba(8, 14, 12, 0.34),
+    inset 0 1px 0 rgba(255, 252, 242, 0.1);
+  border-radius: 26px;
+  padding: 10px;
+  backdrop-filter: blur(20px);
 }
 .logo {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 8px;
+  gap: 8px;
+  margin-bottom: 12px;
+  color: var(--wf-mint);
 }
 .logo h2 {
   margin: 0;
-  color: #0ea5e9;
+  color: var(--wf-text-strong);
+  font-family: Georgia, "Times New Roman", "Noto Serif SC", serif;
+  font-weight: 700;
+  letter-spacing: 0.08em;
 }
 .actions {
   display: flex;
@@ -112,7 +115,7 @@ const onRegister = () => ElMessage.info("暂未开放注册");
 .login {
   width: 100%;
   margin-top: 12px;
-  border-radius: 24px;
-  box-shadow: 0 8px 16px rgba(14, 165, 233, 0.35);
+  border-radius: 999px;
+  box-shadow: 0 14px 26px rgba(79, 183, 165, 0.28);
 }
 </style>

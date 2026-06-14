@@ -81,13 +81,37 @@
 
 <script setup lang="ts">
 import { ref, onMounted, shallowRef, onBeforeUnmount } from 'vue'
-import { mbtiOptions } from '@/data/profile'
 import { useProfileStore } from '@/stores/profile'
 import { updateUserInfo } from '@/api/users'
 import { uploadImage } from '@/api/articles'
 import { ElMessage } from 'element-plus'
 import '@wangeditor/editor/dist/css/style.css'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
+
+type MbtiType =
+  | 'INTJ' | 'INTP' | 'ENTJ' | 'ENTP'
+  | 'INFJ' | 'INFP' | 'ENFJ' | 'ENFP'
+  | 'ISTJ' | 'ISFJ' | 'ESTJ' | 'ESFJ'
+  | 'ISTP' | 'ISFP' | 'ESTP' | 'ESFP'
+
+const mbtiOptions: { value: MbtiType; label: MbtiType }[] = [
+  { value: 'INTJ', label: 'INTJ' },
+  { value: 'INTP', label: 'INTP' },
+  { value: 'ENTJ', label: 'ENTJ' },
+  { value: 'ENTP', label: 'ENTP' },
+  { value: 'INFJ', label: 'INFJ' },
+  { value: 'INFP', label: 'INFP' },
+  { value: 'ENFJ', label: 'ENFJ' },
+  { value: 'ENFP', label: 'ENFP' },
+  { value: 'ISTJ', label: 'ISTJ' },
+  { value: 'ISFJ', label: 'ISFJ' },
+  { value: 'ESTJ', label: 'ESTJ' },
+  { value: 'ESFJ', label: 'ESFJ' },
+  { value: 'ISTP', label: 'ISTP' },
+  { value: 'ISFP', label: 'ISFP' },
+  { value: 'ESTP', label: 'ESTP' },
+  { value: 'ESFP', label: 'ESFP' },
+]
 
 const store = useProfileStore()
 const formRef = ref()

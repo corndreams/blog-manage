@@ -6,8 +6,6 @@
           <el-radio-button label="category">分类</el-radio-button>
           <el-radio-button label="tag">标签</el-radio-button>
         </el-radio-group>
-      </div>
-      <div class="right">
         <el-input v-model="keyword" placeholder="搜索名称/别名" :prefix-icon="Search" clearable style="width: 260px;" />
       </div>
     </el-card>

@@ -96,15 +96,47 @@ watchEffect(async () => {
 </script>
 
 <style scoped>
-.dashboard { color: #e2e8f0; }
-.stat-card { border: none; }
-.stat-title { font-size: 14px; opacity: 0.8; }
-.stat-value { font-size: 32px; font-weight: 700; margin-top: 8px; }
-.stat-blue { background: linear-gradient(135deg,#2a6cf6,#3b82f6); color: #fff; }
-.stat-orange { background: linear-gradient(135deg,#ef6c00,#f59e0b); color: #fff; }
-.stat-pink { background: linear-gradient(135deg,#e91e63,#f472b6); color: #fff; }
-.stat-green { background: linear-gradient(135deg,#10b981,#22c55e); color: #fff; }
+.dashboard { color: var(--wf-text); }
+.stat-card {
+  position: relative;
+  min-height: 118px;
+  overflow: hidden;
+  border: 1px solid rgba(235, 221, 188, 0.13) !important;
+  background:
+    radial-gradient(circle at 88% 18%, var(--stat-glow), transparent 36%),
+    linear-gradient(145deg, rgba(255, 252, 242, 0.11), rgba(255, 252, 242, 0.045)),
+    rgba(26, 38, 33, 0.74) !important;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  inset: 14px 16px auto auto;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: var(--stat-accent);
+  opacity: 0.2;
+  filter: blur(2px);
+}
+.stat-title {
+  position: relative;
+  font-size: 14px;
+  color: var(--wf-text-muted);
+  letter-spacing: 0.04em;
+}
+.stat-value {
+  position: relative;
+  color: var(--wf-text-strong);
+  font-family: Georgia, "Times New Roman", "Noto Serif SC", serif;
+  font-size: 36px;
+  font-weight: 700;
+  margin-top: 10px;
+}
+.stat-blue { --stat-accent: #4fb7a5; --stat-glow: rgba(79, 183, 165, 0.3); }
+.stat-orange { --stat-accent: #d7a85f; --stat-glow: rgba(215, 168, 95, 0.28); }
+.stat-pink { --stat-accent: #df7b73; --stat-glow: rgba(223, 123, 115, 0.24); }
+.stat-green { --stat-accent: #9ed9c8; --stat-glow: rgba(158, 217, 200, 0.28); }
 .chart-placeholder { height: 100%; display:flex; align-items:center; justify-content:center; opacity:0.7; }
-.chart-toolbar { display:flex; justify-content: space-between; align-items:center; margin-bottom:8px; }
+.chart-toolbar { display:flex; justify-content: flex-end; align-items:center; margin-bottom:8px; }
 .echart { width:100%; height: 400px; }
 </style>

@@ -1,7 +1,8 @@
 <template>
   <div class="diary">
     <el-card class="toolbar" shadow="never">
-      <div class="left">
+      <div class="left"></div>
+      <div class="right">
         <el-button type="primary" :icon="Plus" @click="onCreate">新增随记</el-button>
       </div>
     </el-card>

@@ -1,42 +1,100 @@
 # blog-manage
 
-This template should help get you started developing with Vue 3 in Vite.
+一个基于 Vue 3 + Vite + TypeScript 的博客后台管理系统，用于管理文章/随记/评论/留言/分类标签/图库等内容，并提供数据概览与访问记录查看。
 
-## Recommended IDE Setup
+## 项目组成
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- 前台：`https://github.com/corndreams/blog-frontend`
+- 管理端（当前仓库）：`https://github.com/corndreams/blog-manage`
+- 后端服务端：`https://github.com/corndreams/blog-server`
 
-## Recommended Browser Setup
+## 技术栈
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+- Vue 3、Vue Router
+- Pinia
+- Element Plus（含 @element-plus/icons-vue）
+- WangEditor（富文本编辑）
+- ECharts（数据可视化）
+- Axios
+- Vite、TypeScript
 
-## Type Support for `.vue` Imports in TS
+## 功能概览
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+- 登录鉴权：登录成功后将 token 存入 localStorage，并在请求头以 `token` 字段携带
+- 数据概览：仪表盘展示核心数据（访问量/内容数量等）
+- 文章管理：列表、创建/编辑（富文本）、发布/草稿等状态
+- 随记管理：列表、创建/编辑、发布/隐藏等状态
+- 评论/留言管理：列表、审核/删除（以接口实现为准）
+- 分类/标签管理：增删改查
+- 个人信息：资料编辑（头像/签名/简介等）
+- 友情链接：增删改查
+- 图库：上传与素材列表（配合后端 `/files` 接口）
+- 访问记录：按时间筛选分页查看访问明细（设备/UA/IP 等）
 
-## Customize configuration
+## 最近更新
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+- 优化登录态初始化：应用挂载前恢复本地 token，避免刷新后首批请求未携带鉴权信息。
+- 增加 401 处理：接口返回未授权时自动清理登录状态并跳转登录页。
+- 增加左侧侧边栏收缩/展开，提升后台在宽内容页面下的可用空间。
+- 升级管理端 UI 风格：与晚风漫记前台相似的玻璃拟态、暖纸色、柔和卡片和低饱和青绿色体系。
+- 优化表格、分页、图库占位和富文本编辑器样式，减少白色闪烁并提升暗色背景下的可读性。
 
-## Project Setup
+## 本地运行
 
-```sh
+### 环境要求
+
+- Node：`^20.19.0 || >=22.12.0`
+- 包管理器：pnpm
+
+### 安装依赖
+
+```bash
 pnpm install
 ```
 
-### Compile and Hot-Reload for Development
+### 启动开发服务
 
-```sh
+```bash
 pnpm dev
 ```
 
-### Type-Check, Compile and Minify for Production
+### 构建与预览
 
-```sh
+```bash
 pnpm build
+pnpm preview
+```
+
+### 类型检查
+
+```bash
+pnpm type-check
+```
+
+## 后端地址配置
+
+当前请求基地址在 [http.ts](/src/api/http.ts) 中配置（`baseURL`）。如需切换到本地后端，修改为你的后端地址，例如：
+
+```ts
+baseURL: 'http://localhost:3000'
+```
+
+## 登录账号
+
+后端启动时会自动初始化数据库并创建默认管理员账号（若数据库中还不存在用户）。默认账号信息在 [db.js](/models/db.js) 中配置：
+
+## 目录结构
+
+```text
+src/
+  api/            接口封装（articles/comments/diary/files/...）
+  assets/         静态资源与全局样式
+  components/     组件（登录表单、布局组件等）
+  layouts/        页面布局（AdminLayout/AuthLayout）
+  router/         路由与鉴权守卫
+  stores/         Pinia 状态（auth/articles/comments/...）
+  views/          页面（Dashboard/文章/随记/分类标签/访问记录等）
+  main.ts         入口
+  App.vue         根组件
+```
 ```

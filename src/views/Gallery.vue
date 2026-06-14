@@ -1,7 +1,8 @@
 <template>
   <div class="gallery">
     <el-card class="toolbar" shadow="never">
-      <div class="left">
+      <div class="left"></div>
+      <div class="right">
         <el-upload :show-file-list="false" :auto-upload="false" :on-change="onUpload">
           <el-button type="primary">上传图片</el-button>
         </el-upload>

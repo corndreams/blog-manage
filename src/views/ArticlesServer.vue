@@ -2,10 +2,10 @@
   <div class="articles">
     <el-card class="toolbar" shadow="never">
       <div class="left">
-        <el-button type="primary" :icon="Plus" @click="onCreate">新增文章</el-button>
+        <el-input v-model="keyword" placeholder="搜索标题" :prefix-icon="Search" clearable />
       </div>
       <div class="right">
-        <el-input v-model="keyword" placeholder="搜索标题" :prefix-icon="Search" clearable />
+        <el-button type="primary" :icon="Plus" @click="onCreate">新增文章</el-button>
       </div>
     </el-card>
 
@@ -58,9 +58,9 @@ const onCreate = () => router.push('/articles/edit')
 
 <style scoped>
 .articles { color: #e2e8f0; }
-.toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.left { display: flex; gap: 12px; align-items: center; }
-.right { width: 260px; }
+.toolbar { margin-bottom: 12px; }
+.left { min-width: 260px; }
+.right { margin-left: auto; }
 .table-card { border: none; }
 .pager { display: flex; justify-content: center; margin-top: 12px; }
 </style>
