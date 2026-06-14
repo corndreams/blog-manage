@@ -16,7 +16,7 @@
       </el-form-item>
       <el-form-item label="内容" prop="content">
         <div class="editor-wrap">
-          <Toolbar :editor="editorRef" :defaultConfig="toolbarConfig" class="toolbar" />
+          <Toolbar :editor="editorRef" :defaultConfig="toolbarConfig" class="editor-toolbar" />
           <Editor
             v-model="form.content"
             :defaultConfig="editorConfig"
@@ -113,7 +113,7 @@ const onCancel = () => router.back()
 .edit-card { border:none; }
 .title { margin: 0 0 8px; color: #e2e8f0; }
 .editor-wrap { display: block; }
-.toolbar { border: 1px solid rgba(255,255,255,0.1); border-bottom: none; border-radius: 8px 8px 0 0; display:block; }
+.editor-toolbar { border: 1px solid rgba(255,255,255,0.1); border-bottom: none; border-radius: 8px 8px 0 0; display:block; }
 .editor { border: 1px solid rgba(255,255,255,0.1); height: 420px; overflow-y: auto; border-radius: 0 0 8px 8px; background: rgba(255,255,255,0.04); display:block; }
 .actions { display:flex; gap:8px; }
 </style>

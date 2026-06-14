@@ -43,7 +43,7 @@
               <el-col :md="24" :xs="24">
                 <el-form-item label="MBTI介绍" prop="mbti_intro">
                   <div class="editor-wrap">
-                    <Toolbar :editor="editorIntroRef" :defaultConfig="toolbarConfig" class="toolbar" />
+                    <Toolbar :editor="editorIntroRef" :defaultConfig="toolbarConfig" class="editor-toolbar" />
                     <Editor
                       v-model="form.mbti_intro"
                       :defaultConfig="editorConfig"
@@ -59,7 +59,7 @@
 
         <el-form-item label="个人介绍" prop="about">
           <div class="editor-wrap">
-            <Toolbar :editor="editorAboutRef" :defaultConfig="toolbarConfig" class="toolbar" />
+            <Toolbar :editor="editorAboutRef" :defaultConfig="toolbarConfig" class="editor-toolbar" />
             <Editor
               v-model="form.about"
               :defaultConfig="editorConfig"
@@ -213,7 +213,7 @@ onMounted(async () => {
   display: block;
   margin-top: 4px;
 }
-.toolbar {
+.editor-toolbar {
   border: 1px solid rgba(255,255,255,0.1);
   border-bottom: none;
   border-radius: 8px 8px 0 0;

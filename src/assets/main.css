@@ -420,11 +420,11 @@ a {
   box-shadow: inset 0 1px 0 rgba(255, 252, 242, 0.06);
 }
 
-.editor-wrap .toolbar {
+.editor-wrap .editor-toolbar {
   border: none !important;
   border-bottom: 1px solid rgba(235, 221, 188, 0.12) !important;
   border-radius: 0 !important;
-  background: rgba(255, 252, 242, 0.08) !important;
+  background: rgba(252, 244, 224, 0.94) !important;
   box-shadow: none;
   backdrop-filter: none;
 }

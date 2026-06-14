@@ -55,7 +55,7 @@
               <el-button type="primary" plain>导入MD</el-button>
             </el-upload>
           </div>
-          <Toolbar :editor="editorRef" :defaultConfig="toolbarConfig" class="toolbar" />
+          <Toolbar :editor="editorRef" :defaultConfig="toolbarConfig" class="editor-toolbar" />
           <Editor
             v-model="form.content"
             :defaultConfig="editorConfig"
@@ -298,7 +298,7 @@ const applyCoverLink = () => { if (coverLink.value) form.value.cover = coverLink
 .title { margin: 0 0 8px; color: #e2e8f0; }
 .editor-wrap { display: block; }
 .editor-actions { display: flex; justify-content: flex-end; margin-bottom: 8px; }
-.toolbar { border: 1px solid rgba(255,255,255,0.1); border-bottom: none; border-radius: 8px 8px 0 0; display:block; }
+.editor-toolbar { border: 1px solid rgba(255,255,255,0.1); border-bottom: none; border-radius: 8px 8px 0 0; display:block; }
 .editor { border: 1px solid rgba(255,255,255,0.1); height: 420px; overflow-y: auto; border-radius: 0 0 8px 8px; background: rgba(255,255,255,0.04); display:block; }
 .actions { display: flex; gap: 8px; }
 </style>
