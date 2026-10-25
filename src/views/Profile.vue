@@ -42,15 +42,7 @@
               </el-col>
               <el-col :md="24" :xs="24">
                 <el-form-item label="MBTI介绍" prop="mbti_intro">
-                  <div class="editor-wrap">
-                    <Toolbar :editor="editorIntroRef" :defaultConfig="toolbarConfig" class="editor-toolbar" />
-                    <Editor
-                      v-model="form.mbti_intro"
-                      :defaultConfig="editorConfig"
-                      @onCreated="handleIntroCreated"
-                      class="editor"
-                    />
-                  </div>
+                  <BlogEditor v-model="form.mbti_intro" :height="280" />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -58,15 +50,7 @@
         </el-row>
 
         <el-form-item label="个人介绍" prop="about">
-          <div class="editor-wrap">
-            <Toolbar :editor="editorAboutRef" :defaultConfig="toolbarConfig" class="editor-toolbar" />
-            <Editor
-              v-model="form.about"
-              :defaultConfig="editorConfig"
-              @onCreated="handleAboutCreated"
-              class="editor"
-            />
-          </div>
+          <BlogEditor v-model="form.about" :height="280" />
         </el-form-item>
 
         
@@ -80,13 +64,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, shallowRef, onBeforeUnmount } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useProfileStore } from '@/stores/profile'
 import { updateUserInfo } from '@/api/users'
 import { uploadImage } from '@/api/articles'
 import { ElMessage } from 'element-plus'
-import '@wangeditor/editor/dist/css/style.css'
-import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
+import BlogEditor from '@/components/editor/BlogEditor.vue'
 
 type MbtiType =
   | 'INTJ' | 'INTP' | 'ENTJ' | 'ENTP'
@@ -117,14 +100,6 @@ const store = useProfileStore()
 const formRef = ref()
 const form = ref<any>({ avatar: '', name: '', tagline: '', quote: '', mbti: '', mbti_intro: '', about: '' })
 const loading = ref(false)
-
-const editorIntroRef = shallowRef()
-const editorAboutRef = shallowRef()
-const toolbarConfig = {}
-const editorConfig = { placeholder: '请输入内容...' }
-const handleIntroCreated = (editor: any) => { editorIntroRef.value = editor }
-const handleAboutCreated = (editor: any) => { editorAboutRef.value = editor }
-onBeforeUnmount(() => { const a = editorIntroRef.value; if (a) a.destroy(); const b = editorAboutRef.value; if (b) b.destroy() })
 
 const rules = {
   name: [{ required: true, message: '请输入名字', trigger: 'blur' }],
@@ -187,6 +162,11 @@ onMounted(async () => {
 }
 .card { 
   border: none;
+  backdrop-filter: none !important;
+  overflow: visible !important;
+}
+.card:hover {
+  transform: none !important;
 }
 .title {
   margin: 0 0 8px;
@@ -208,23 +188,5 @@ onMounted(async () => {
 .actions {
   display: flex;
   gap: 8px;
-}
-.editor-wrap {
-  display: block;
-  margin-top: 4px;
-}
-.editor-toolbar {
-  border: 1px solid rgba(255,255,255,0.1);
-  border-bottom: none;
-  border-radius: 8px 8px 0 0;
-  display: block;
-}
-.editor {
-  border: 1px solid rgba(255,255,255,0.1);
-  height: 280px;
-  overflow-y: auto;
-  border-radius: 0 0 8px 8px;
-  background: rgba(255,255,255,0.04);
-  display: block;
 }
 </style>

@@ -40,29 +40,24 @@
       <el-form-item label="摘要" prop="description">
         <el-input v-model="form.description" placeholder="请输入文章摘要" />
       </el-form-item>
+      <el-form-item label="置顶">
+        <el-switch v-model="form.is_top" :active-value="1" :inactive-value="0" />
+      </el-form-item>
     </el-col>
   </el-row>
 
       <el-form-item label="内容" prop="content">
-        <div class="editor-wrap">
-          <div class="editor-actions">
-            <el-upload
-              :auto-upload="false"
-              :show-file-list="false"
-              accept=".md,.markdown"
-              :on-change="onMdChange"
-            >
-              <el-button type="primary" plain>导入MD</el-button>
-            </el-upload>
-          </div>
-          <Toolbar :editor="editorRef" :defaultConfig="toolbarConfig" class="editor-toolbar" />
-          <Editor
-            v-model="form.content"
-            :defaultConfig="editorConfig"
-            @onCreated="handleCreated"
-            class="editor"
-          />
+        <div class="editor-actions">
+          <el-upload
+            :auto-upload="false"
+            :show-file-list="false"
+            accept=".md,.markdown"
+            :on-change="onMdChange"
+          >
+            <el-button type="primary" plain>导入MD</el-button>
+          </el-upload>
         </div>
+        <BlogEditor v-model="form.content" :height="420" />
       </el-form-item>
 
       <div class="actions">
@@ -75,15 +70,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef, onBeforeUnmount, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import '@wangeditor/editor/dist/css/style.css'
-import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import matter from 'gray-matter'
 import MarkdownIt from 'markdown-it'
 import { postArticleEdit, uploadImage, getArticle } from '@/api/articles'
 import { useTaxonomyStore } from '@/stores/taxonomy'
+import BlogEditor from '@/components/editor/BlogEditor.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -94,7 +88,7 @@ const isEdit = !!idParam
 const loading = ref(false)
 const formRef = ref()
 
-const initial: any = { id: isEdit ? Number(idParam) : undefined, title: '', description: '', cover: '', category_id: null, tagIds: [], status: '草稿', views: 0, tags: [], author: 'conrdreams', content: '' }
+const initial: any = { id: isEdit ? Number(idParam) : undefined, title: '', description: '', cover: '', category_id: null, tagIds: [], status: '草稿', views: 0, is_top: 0, tags: [], author: 'conrdreams', content: '' }
 
 const form = ref<any>({ ...initial })
 
@@ -103,12 +97,6 @@ const rules = {
   category_id: [{ required: true, message: '请选择分类', trigger: 'change' }],
   content: [{ required: true, message: '请输入内容', trigger: 'change' }],
 }
-
-const editorRef = shallowRef()
-const toolbarConfig = {}
-const editorConfig = { placeholder: '请输入内容...' }
-const handleCreated = (editor: any) => { editorRef.value = editor }
-onBeforeUnmount(() => { const e = editorRef.value; if (e) e.destroy() })
 
 const markdown = new MarkdownIt({ html: true, linkify: true, breaks: true })
 
@@ -232,6 +220,7 @@ onMounted(async () => {
     form.value.content = d.content || ''
     form.value.cover = d.cover || ''
     form.value.category_id = d.category_id
+    form.value.is_top = d.is_top ? 1 : 0
     form.value.tagIds = (d.tags || []).map(t => t.id)
   }
 })
@@ -247,6 +236,7 @@ const onSave = async () => {
     category_id: Number(form.value.category_id || 0),
     tagIds: (form.value.tagIds || []).map((n: any) => Number(n)),
     state: 0 as 0|1,
+    is_top: form.value.is_top ? 1 : 0,
   }
   if (isEdit && form.value.id != null) payload.id = form.value.id
   await postArticleEdit(payload)
@@ -266,6 +256,7 @@ const onPublish = async () => {
     category_id: Number(form.value.category_id || 0),
     tagIds: (form.value.tagIds || []).map((n: any) => Number(n)),
     state: 1 as 0|1,
+    is_top: form.value.is_top ? 1 : 0,
   }
   if (isEdit && form.value.id != null) payload.id = form.value.id
   await postArticleEdit(payload)
@@ -294,26 +285,13 @@ const applyCoverLink = () => { if (coverLink.value) form.value.cover = coverLink
 <style scoped>
 .edit-card { 
   border: none;
+  backdrop-filter: none !important;
+  overflow: visible !important;
+}
+.edit-card:hover {
+  transform: none !important;
 }
 .title { margin: 0 0 8px; color: #e2e8f0; }
-.editor-wrap { display: block; }
 .editor-actions { display: flex; justify-content: flex-end; margin-bottom: 8px; }
-.editor-toolbar { border: 1px solid rgba(255,255,255,0.1); border-bottom: none; border-radius: 8px 8px 0 0; display:block; }
-.editor { border: 1px solid rgba(255,255,255,0.1); height: 420px; overflow-y: auto; border-radius: 0 0 8px 8px; background: rgba(255,255,255,0.04); display:block; }
 .actions { display: flex; gap: 8px; }
-</style>
-<style>
-#editor—wrapper {
-  border: 1px solid #ccc;
-  z-index: 100;
-  /* 按需定义 */
-}
-
-#toolbar-container {
-  border-bottom: 1px solid #ccc;
-}
-
-#editor-container {
-  height: 500px;
-}
 </style>

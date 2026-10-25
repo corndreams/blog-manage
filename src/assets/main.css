@@ -411,7 +411,8 @@ a {
   align-items: center;
 }
 
-.editor-wrap {
+.editor-wrap,
+.blog-editor {
   width: 100%;
   overflow: hidden;
   border: 1px solid rgba(235, 221, 188, 0.14);
@@ -420,7 +421,8 @@ a {
   box-shadow: inset 0 1px 0 rgba(255, 252, 242, 0.06);
 }
 
-.editor-wrap .editor-toolbar {
+.editor-wrap .editor-toolbar,
+.blog-editor .editor-toolbar {
   border: none !important;
   border-bottom: 1px solid rgba(235, 221, 188, 0.12) !important;
   border-radius: 0 !important;
@@ -429,7 +431,8 @@ a {
   backdrop-filter: none;
 }
 
-.editor-wrap .editor {
+.editor-wrap .editor,
+.blog-editor .editor {
   border: none !important;
   border-radius: 0 !important;
   background: rgba(252, 244, 224, 0.86) !important;
@@ -438,7 +441,10 @@ a {
 
 .editor-wrap .w-e-text-container,
 .editor-wrap .w-e-scroll,
-.editor-wrap [data-slate-editor] {
+.editor-wrap [data-slate-editor],
+.blog-editor .w-e-text-container,
+.blog-editor .w-e-scroll,
+.blog-editor [data-slate-editor] {
   background:
     linear-gradient(rgba(117, 99, 63, 0.055) 1px, transparent 1px),
     rgba(252, 244, 224, 0.9) !important;
@@ -447,9 +453,11 @@ a {
 }
 
 .editor-wrap .w-e-bar,
-.editor-wrap .w-e-toolbar {
+.editor-wrap .w-e-toolbar,
+.blog-editor .w-e-bar,
+.blog-editor .w-e-toolbar {
   background: transparent !important;
-  color: var(--wf-text) !important;
+  color: var(--wf-ink) !important;
 }
 
 .el-loading-mask {

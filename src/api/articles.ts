@@ -10,6 +10,7 @@ export interface ArticleListItem {
   category_id: number
   category_name: string
   state: 0 | 1
+  is_top: 0 | 1
   views: number
   created_at: string
   updated_at: string
@@ -36,6 +37,7 @@ export interface ArticleDetail {
   cover: string | null
   category_id: number
   state: 0 | 1
+  is_top: 0 | 1
   created_at: string
   updated_at: string | null
   category_name: string
@@ -62,6 +64,7 @@ export interface EditArticlePayload {
   category_id: number
   tagIds: number[]
   state: 0 | 1
+  is_top?: 0 | 1
 }
 
 export interface EditArticleResp {
@@ -82,6 +85,7 @@ export async function postArticleEdit(payload: EditArticlePayload) {
   params.set('category_id', String(payload.category_id))
   payload.tagIds.forEach((id) => params.append('tagIds', String(id)))
   params.set('state', String(payload.state))
+  params.set('is_top', String(payload.is_top ?? 0))
   const res = await http.post<EditArticleResp>('/articles/edit', params)
   return res.data
 }

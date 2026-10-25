@@ -15,15 +15,7 @@
         />
       </el-form-item>
       <el-form-item label="内容" prop="content">
-        <div class="editor-wrap">
-          <Toolbar :editor="editorRef" :defaultConfig="toolbarConfig" class="editor-toolbar" />
-          <Editor
-            v-model="form.content"
-            :defaultConfig="editorConfig"
-            @onCreated="handleCreated"
-            class="editor"
-          />
-        </div>
+        <BlogEditor v-model="form.content" :height="420" />
       </el-form-item>
       <div class="actions">
         <el-button type="primary" :loading="loading" @click="onSave(0)">保存</el-button>
@@ -35,13 +27,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, shallowRef, onBeforeUnmount } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useDiaryStore } from '@/stores/diary'
-import '@wangeditor/editor/dist/css/style.css'
-import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
-import { uploadImage } from '@/api/articles'
+import BlogEditor from '@/components/editor/BlogEditor.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -69,35 +59,6 @@ onMounted(async () => {
   }
 })
 
-const editorRef = shallowRef()
-const toolbarConfig = {}
-const editorConfig: any = {
-  placeholder: '请输入内容...',
-  MENU_CONF: {
-    uploadImage: {
-      async customUpload(fileOrFiles: any, insertImgFn: any) {
-        const files: File[] = Array.isArray(fileOrFiles) ? fileOrFiles : [fileOrFiles]
-        for (const f of files) {
-          await new Promise<void>((resolve) => {
-            const reader = new FileReader()
-            reader.onload = async () => {
-              const dataUrl = String(reader.result)
-              try {
-                const res = await uploadImage(f.name, dataUrl)
-                const url = res.data.url
-                insertImgFn(url)
-              } finally { resolve() }
-            }
-            reader.readAsDataURL(f)
-          })
-        }
-      },
-    }
-  }
-}
-const handleCreated = (editor: any) => { editorRef.value = editor }
-onBeforeUnmount(() => { const e = editorRef.value; if (e) e.destroy() })
-
 const onSave = async (state: 0|1) => {
   await formRef.value?.validate()
   loading.value = true
@@ -110,10 +71,14 @@ const onCancel = () => router.back()
 </script>
 
 <style scoped>
-.edit-card { border:none; }
+.edit-card {
+  border: none;
+  backdrop-filter: none !important;
+  overflow: visible !important;
+}
+.edit-card:hover {
+  transform: none !important;
+}
 .title { margin: 0 0 8px; color: #e2e8f0; }
-.editor-wrap { display: block; }
-.editor-toolbar { border: 1px solid rgba(255,255,255,0.1); border-bottom: none; border-radius: 8px 8px 0 0; display:block; }
-.editor { border: 1px solid rgba(255,255,255,0.1); height: 420px; overflow-y: auto; border-radius: 0 0 8px 8px; background: rgba(255,255,255,0.04); display:block; }
 .actions { display:flex; gap:8px; }
 </style>
